@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import useAuth from '../../Hooks/AuthHooks';
 import { div } from 'motion/react-client';
+import axios from 'axios';
+import AxiosSecure from '../../Hooks/AxiosSecure';
 
 const JobApplication = () => {
 
     const { user } = useAuth();
     const [jobs, setJobs] = useState([]);
+    const AxiosSecurity = AxiosSecure();
 
     useEffect(() => {
-        fetch(`http://localhost:5000/job-application?email=${user?.email || ""}`)
-            .then(res => res.json())
-            .then(data => setJobs(data))
+         if (!user?.email) return; 
+        // fetch(`http://localhost:5000/job-application?email=${user?.email || ""}`)
+        //     .then(res => res.json())
+        //     .then(data => setJobs(data))
+        // axios.get(`http://localhost:5000/job-application?email=${user?.email || ""}`,{withCredentials:true})
+        // .then(res => setJobs(res.data))
+
+        // hook use kore 
+        AxiosSecurity.get(`/job-application?email=${user?.email || ""}`)
+        .then(res => setJobs(res.data))
+
     }, [user.email]);
     return (
         <div>
             {
-                jobs.map(job => <div className="overflow-x-auto">
+                jobs.map(job => <div key={job._id} className="overflow-x-auto">
                     <table className="table">
                         {/* head */}
                         <thead>
